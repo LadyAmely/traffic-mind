@@ -2,7 +2,9 @@ package org.shop.traffic.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.shop.traffic.dto.request.CreateIntersectionRequest;
+import org.shop.traffic.dto.request.VehicleRequest;
 import org.shop.traffic.dto.response.IntersectionResponse;
+import org.shop.traffic.dto.response.VehicleResponse;
 import org.shop.traffic.service.TrafficSimulationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +26,17 @@ public class TrafficSimulationController {
         IntersectionResponse response = trafficSimulationService.createTrafficIntersection(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
-    /**
-     * Handles GET requests to retrieve the current state of a traffic intersection by its ID.
-     */
+    /** Handles GET requests to retrieve the current state of a traffic intersection by its ID.**/
     @GetMapping("/intersection/{id}")
     public ResponseEntity<IntersectionResponse> getIntersection(@PathVariable UUID id){
         IntersectionResponse response = trafficSimulationService.getTrafficIntersection(id);
         return ResponseEntity.ok(response);
+    }
+    /** Handles POST requests to add a vehicle to a specific intersection **/
+    @PostMapping("/intersection/{id}/vehicle")
+    public ResponseEntity<VehicleResponse> addVehicleToIntersection(
+            @RequestBody VehicleRequest request, @PathVariable UUID id){
+        VehicleResponse response = trafficSimulationService.addVehicle(request, id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

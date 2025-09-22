@@ -4,9 +4,15 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.shop.traffic.dto.request.CreateIntersectionRequest;
+import org.shop.traffic.dto.request.VehicleRequest;
 import org.shop.traffic.dto.response.IntersectionResponse;
+import org.shop.traffic.dto.response.VehicleResponse;
+import org.shop.traffic.mapper.IntersectionMapper;
+import org.shop.traffic.mapper.VehicleMapper;
 import org.shop.traffic.model.Intersection;
+import org.shop.traffic.model.Vehicle;
 import org.shop.traffic.repository.IntersectionRepository;
+import org.shop.traffic.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -16,6 +22,29 @@ import java.util.UUID;
 public class TrafficSimulationService {
 
     private final IntersectionRepository intersectionRepository;
+    private final VehicleRepository vehicleRepository;
+    private final VehicleMapper vehicleMapper;
+    private final IntersectionMapper intersectionMapper;
+
+    /** Adding a vehicle to a specific road **/
+    @Transactional
+    public VehicleResponse addVehicle(VehicleRequest request, UUID id){
+        var intersection = intersectionRepository.findById(id)
+                .orElseThrow(()->new EntityNotFoundException("Intersection with id: " + id + "not found."));
+
+        var entity = Vehicle.builder()
+                .id(intersection.getId())
+                .vehicleType(request.vehicleType())
+                .speed(request.speed())
+                .length(request.length())
+                .arrivalTime(request.arrivalTime())
+                .priority(request.priority())
+                .turn(request.intendedTurn())
+                .build();
+
+        var saved = vehicleRepository.save(entity);
+        return vehicleMapper.toResponse(saved);
+    }
 
     /**
      * Creates a new intersection based on the request data and returns its DTO representation.
@@ -30,7 +59,7 @@ public class TrafficSimulationService {
                 .longitude(request.longitude())
                 .build();
         var saved = intersectionRepository.save(entity);
-        return toResponse(saved);
+        return intersectionMapper.toResponse(saved);
     }
 
     /**
@@ -39,21 +68,6 @@ public class TrafficSimulationService {
     public IntersectionResponse getTrafficIntersection(UUID id){
         var entity = intersectionRepository.findById(id)
                 .orElseThrow(()->new EntityNotFoundException("Intersection with id: " + id + "not found."));
-        return toResponse(entity);
-    }
-
-    /**
-     * Maps an Intersection entity to its corresponding IntersectionResponse DTO.
-     */
-    private IntersectionResponse toResponse(
-            Intersection intersection
-    ){
-        return new IntersectionResponse(
-          intersection.getId(),
-          intersection.getName(),
-          intersection.getLocation(),
-          intersection.getLatitude(),
-          intersection.getLongitude()
-        );
+        return intersectionMapper.toResponse(entity);
     }
 }
