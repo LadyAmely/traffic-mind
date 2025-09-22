@@ -32,6 +32,6 @@ public class LightPhase {
     @Column(name = "duration")
     private Integer duration;
 
-    @Column(name = "order")
-    private Integer order;
+    @Column(name = "phase_order")
+    private Integer phaseOrder;
 }
