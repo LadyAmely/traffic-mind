@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.nio.file.AccessDeniedException;
 import java.time.OffsetDateTime;
 
 @Slf4j
@@ -42,6 +43,34 @@ class GlobalExceptionHandler {
        return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                .body(errorResponse);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    private ResponseEntity<ErrorResponse> handleIllegalStateException(
+            IllegalStateException ex,
+            HttpServletRequest request) {
+        log.warn("Warning occured: {}", ex.getMessage(), ex);
+        ErrorResponse errorResponse = buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                request.getRequestURI());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    private ResponseEntity<ErrorResponse> handleAccessDeniedException(
+            AccessDeniedException ex,
+            HttpServletRequest request) {
+        log.warn("Warning occured: {}", ex.getMessage(), ex);
+        ErrorResponse errorResponse = buildErrorResponse(
+                HttpStatus.FORBIDDEN,
+                ex.getMessage(),
+                request.getRequestURI());
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(errorResponse);
     }
 
     private ErrorResponse buildErrorResponse(
