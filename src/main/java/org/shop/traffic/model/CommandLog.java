@@ -33,8 +33,5 @@ public class CommandLog {
 
     @Column(name = "end_road")
     private Direction endRoad;
-
-    @Column(name = "executed_at")
-    private LocalDateTime executedAt;
 }
 

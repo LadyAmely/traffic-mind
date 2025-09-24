@@ -2,8 +2,12 @@ package org.shop.traffic.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.shop.traffic.dto.request.CreateIntersectionRequest;
+import org.shop.traffic.dto.request.CycleRequest;
+import org.shop.traffic.dto.request.SimulationRequest;
 import org.shop.traffic.dto.request.VehicleRequest;
+import org.shop.traffic.dto.response.CycleResponse;
 import org.shop.traffic.dto.response.IntersectionResponse;
+import org.shop.traffic.dto.response.SimulationResponse;
 import org.shop.traffic.dto.response.VehicleResponse;
 import org.shop.traffic.service.TrafficSimulationService;
 import org.springframework.http.HttpStatus;
@@ -37,6 +41,22 @@ public class TrafficSimulationController {
     public ResponseEntity<VehicleResponse> addVehicleToIntersection(
             @RequestBody VehicleRequest request, @PathVariable UUID id){
         VehicleResponse response = trafficSimulationService.addVehicle(request, id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /** Runs a full simulation based on a JSON file with commands. **/
+    @PostMapping("/simulation/run")
+    public ResponseEntity<SimulationResponse> runSimulation(
+            @RequestBody SimulationRequest request){
+        SimulationResponse response = trafficSimulationService.runSimulation(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /** Handles a request to generate a new traffic light cycle based on the provided input. **/
+    @PostMapping("/cycle")
+    public ResponseEntity<CycleResponse> updateCycle(
+            @RequestBody CycleRequest request){
+        CycleResponse response = trafficSimulationService.updateTrafficLightsCycle(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
