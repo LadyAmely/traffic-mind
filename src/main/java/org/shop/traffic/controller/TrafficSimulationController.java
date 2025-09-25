@@ -1,10 +1,7 @@
 package org.shop.traffic.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.shop.traffic.dto.request.CreateIntersectionRequest;
-import org.shop.traffic.dto.request.CycleRequest;
-import org.shop.traffic.dto.request.SimulationRequest;
-import org.shop.traffic.dto.request.VehicleRequest;
+import org.shop.traffic.dto.request.*;
 import org.shop.traffic.dto.response.CycleResponse;
 import org.shop.traffic.dto.response.IntersectionResponse;
 import org.shop.traffic.dto.response.SimulationResponse;
@@ -55,8 +52,8 @@ public class TrafficSimulationController {
     /** Handles a request to generate a new traffic light cycle based on the provided input. **/
     @PostMapping("/cycle")
     public ResponseEntity<CycleResponse> updateCycle(
-            @RequestBody CycleRequest request){
-        CycleResponse response = trafficSimulationService.updateTrafficLightsCycle(request);
+            @RequestBody CycleRequest request, @RequestBody LaneRequest laneRequest){
+        CycleResponse response = trafficSimulationService.updateTrafficLightsCycle(request, laneRequest.laneData());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
