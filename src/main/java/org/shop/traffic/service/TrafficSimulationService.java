@@ -1,11 +1,9 @@
 package org.shop.traffic.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.shop.traffic.dto.request.*;
 import org.shop.traffic.dto.response.CycleResponse;
-import org.shop.traffic.dto.response.IntersectionResponse;
 import org.shop.traffic.dto.response.SimulationResponse;
 import org.shop.traffic.model.*;
 import org.shop.traffic.repository.CommandLogRepository;
